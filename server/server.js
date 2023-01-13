@@ -18,12 +18,12 @@ app.listen(port, () => {
 app.put('/api/mycourses/:id', async(req, res) => {
     try {
         const { id } = req.params;
-        const route = req.body;
+        const course = req.body;
         console.log("An update request has arrived");
-        const updateroute = await pool.query(
-            "UPDATE routes SET (id, departuretime, departuredate) = ($1, $2, $3) WHERE id = $1 RETURNING*", [id, route.departuretime, route.departuredate]
+        const updatecourse = await pool.query(
+            "UPDATE routes SET (id, note) = ($1, $2) WHERE id = $1 RETURNING*", [id, course.note]
         );
-        res.json(updateroute);
+        res.json(updatecourse);
     } catch (err) {
         console.error(err.message);
     }

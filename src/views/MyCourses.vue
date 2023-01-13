@@ -1,3 +1,6 @@
+<div class="description">
+  Current course: {{activeCourse.description}}
+  </div>
 <template>
   <div>
 <h3> My Courses </h3>
@@ -24,15 +27,15 @@
             <td class='red' v-else-if="course.exam < 21">{{ course.exam + course.homeworks }}</td>
             <td class='blue' v-else>{{ course.exam + course.homeworks }}</td>
             <td><input name="note" type="note" id="note" ></td>
-            <td><button class="update"  @click="updateCourses(course.note, course)">update</button> </td> 
+            <td><button class="update"  @click="updateCourses(course.id, course.note)">update</button> </td> 
           </tr>
     </table>
-    </div>
-    <div class="desc">
-      <p>Here will be description</p>
-
+    
     </div>
   </div>
+  <div class="desc" v-if="activeCourse !== null">
+       <b>Course description:</b>  {{ activeCourse.description }}
+      </div>
 </template>
 
 <script>
@@ -41,6 +44,7 @@ export default {
   data() {
     return {
       courses: [],
+      activeCourse:null,
     };
   },
   methods: {
@@ -50,13 +54,17 @@ export default {
         .then((data) => (this.courses = data))
         .catch((err) => console.log(err.message));
    },
+   showdescription(id) {
+      this.activeCourse = this.courses.find((course) => course.id === id);
+    },
+
    updateCourses(id, course){
-    fetch(`http://localhost:3000/api/mycourses/${id}`, {
+    fetch(`http://localhost:3000/api/mycourses/${this.course.id}`, {
       method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify( {"id": id, "code": course.code, "title": course.title, "semester": course.semester, "homeworks": course.homeworks, "exam": course.exam}),
+        body: JSON.stringify( {"id": id, "note": course.note}),
             })
         .then((response) => {
           //console.log("response.data" + response.data);
@@ -91,6 +99,7 @@ th, td {
   font-size: 15px;
   margin-bottom: 5px;
   padding: 8px 10px;
+  
 }
 .container {
   background: #d5d7d8;
@@ -104,18 +113,27 @@ th, td {
 }
 
 .desc{
-  background: rgb(157, 160, 165); 
+  background: rgb(215, 247, 37); 
     padding: 10px 20px;
     display: block;
-    width: 40%;
-    margin: auto;
+    width: 100%;
     font-size: 18px;
 }
 
 .red{
    background: rgb(225, 33, 19); 
+   color:white;
 }
 .blue{
    background: rgb(19, 67, 163); 
+   color:white;
+}
+
+.code:hover{
+  background-color: rgb(215, 247, 37); ;
+}
+
+.update{
+  background-color: blue;
 }
 </style>
